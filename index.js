@@ -1,43 +1,30 @@
 const express = require('express');
-const path = require('path');
-
+const reqFilter = require('./middleware');
 const app = express();
-const publicPath=path.join(__dirname,'public')
-// console.log(publicPath);
-
-app.set('view engine', 'ejs')
-
-// app.use(express.static(publicPath));
-app.get('', (req, res) => {
-  res.sendFile(`${publicPath}/index.html`)
-})
-
-/* template engine */
-app.get('/profile', (req, res) => {
-  const user = {
-    name: 'roger',
-    email: 'roger@roger.com',
-    country: 'BR',
-    skills: ['php', 'js', 'node js', 'java'],
-  }
-  res.render('profile', {user})
-})
-app.get('/login', (req, res) => {
-  res.render('login')
-})
+const route = express.Router();
 
 
-app.get('', (req, res) => {
-  res.sendFile(`${publicPath}/index.html`)
-})
-app.get('/about', (req, res) => {
-  res.sendFile(`${publicPath}/about.html`)
-})
-app.get('/help', (req, res) => {
-  res.sendFile(`${publicPath}/help.html`)
-})
-app.get('*', (req, res) => {
-  res.sendFile(`${publicPath}/nopage.html`)
-})
+// app.use(reqFilter); // => esse middleware é aplicado em toda a aplicação
+route.use(reqFilter) // => middleware para um grupo de routes
 
-app.listen(5500);
+app.get('/', (req, resp) => {
+    resp.send('Welcome to Home page')
+});
+
+// app.get('/users', reqFilter, (req, resp) => {
+//     resp.send('Welcome to Users page')
+// });
+route.get('/users', (req, resp) => {
+    resp.send('Welcome to Users page')
+});
+route.get('/contact', (req, resp) => {
+    resp.send('Welcome to Contact page')
+});
+
+app.get('/about', (req, resp) => {
+  resp.send('Welcome to About page')
+});
+
+app.use('/', route)
+
+app.listen(5500)
