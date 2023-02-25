@@ -1,8 +1,29 @@
-const os = require('os') // operation system
+const express = require('express') 
+const EventEmitter = require('events') 
+const event = new EventEmitter() 
+const app = express() 
 
-// console.log(os.arch());
-// console.log(os.freemem()/(1024*1024*1024));
-// console.log(os.totalmem()/(1024*1024*1024));
-// console.log(os.hostname());
-// console.log(os.platform());
-console.log(os.userInfo());
+// o event emitter soluciona quando precisamos de uma especie de evento de clique em nodeJs
+
+let  count = 0
+event.on("countApiRequest", () => {
+  count ++
+  console.log("API Request count is :" + count);
+})
+
+app.get("/", (req, res) => {
+  res.send("basic api")
+  event.emit("countApiRequest")
+})
+
+app.get("/update", (req, res) => {
+  res.send("update api")
+  event.emit("countApiRequest")
+})
+
+app.get("/search", (req, res) => {
+  res.send("search api")
+  event.emit("countApiRequest")
+})
+
+app.listen(5500)
