@@ -30,4 +30,17 @@ app.put('/update/:_id', async (req, res) => {
   res.send(data)
 })
 
+app.get('/search/:key', async (req, res) => {
+  // console.log(req.params.key)
+  let data = await Product.find(
+    {
+      "$or": [
+        {name:{$regex:req.params.key}},
+        {brand:{$regex:req.params.key}} // aqui colocamos a chave e o paramentro de busca vai buscar o resultado da pesquisa naquelas chaves;
+      ]
+    }
+  )
+  res.send(data)
+})
+
 app.listen(5500)
