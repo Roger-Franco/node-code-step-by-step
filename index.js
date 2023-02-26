@@ -1,29 +1,32 @@
-const express = require('express') 
-const EventEmitter = require('events') 
-const event = new EventEmitter() 
-const app = express() 
+const mysql = require('mysql');
+// const express = require('express')
 
-// o event emitter soluciona quando precisamos de uma especie de evento de clique em nodeJs
+// const app = express();
 
-let  count = 0
-event.on("countApiRequest", () => {
-  count ++
-  console.log("API Request count is :" + count);
+const conn = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  password: 'Rog883**#',
+  database: 'nodemysql',
 })
 
-app.get("/", (req, res) => {
-  res.send("basic api")
-  event.emit("countApiRequest")
+// conn.connect((err) => {
+//   if (err) {
+//     console.warn(err);
+//   } else {
+//     console.warn('Conectou ao MySQL!')
+//   }
+// })  
+
+conn.query("select * from books",(err,result)=>{
+  if(err)
+  {
+    console.warn("some error")
+  }
+  else{
+    console.warn('result', result)
+  }
 })
 
-app.get("/update", (req, res) => {
-  res.send("update api")
-  event.emit("countApiRequest")
-})
-
-app.get("/search", (req, res) => {
-  res.send("search api")
-  event.emit("countApiRequest")
-})
-
-app.listen(5500)
+  // app.listen(5500)
+  // })
