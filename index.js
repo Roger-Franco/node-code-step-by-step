@@ -1,32 +1,18 @@
-const mysql = require('mysql');
-// const express = require('express')
+const express = require('express')
+const conn = require('./config')
 
-// const app = express();
+const app = express();
 
-const conn = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: 'Rog883**#',
-  database: 'nodemysql',
+app.use(express.json())
+
+app.get("/", (req, res) => {
+  conn.query("select * from books", (error, result) => {
+    if(error) {
+       res.send("error in api", error)
+      }else { 
+        res.send(result)
+      }
+  }) 
 })
 
-// conn.connect((err) => {
-//   if (err) {
-//     console.warn(err);
-//   } else {
-//     console.warn('Conectou ao MySQL!')
-//   }
-// })  
-
-conn.query("select * from books",(err,result)=>{
-  if(err)
-  {
-    console.warn("some error")
-  }
-  else{
-    console.warn('result', result)
-  }
-})
-
-  // app.listen(5500)
-  // })
+  app.listen(5500)
