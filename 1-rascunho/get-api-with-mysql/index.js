@@ -15,13 +15,4 @@ app.get("/", (req, res) => {
   }) 
 })
 
-app.post("/", (req, res) => {
-  // const data = {title: 'guerra e paz', pageqty: 880}
-  const data = req.body
-  conn.query("INSERT INTO books SET?", data, (error, results, fields) => {
-    if(error) throw error;
-    res.send(results)
-  })
-})
-
   app.listen(5500)
