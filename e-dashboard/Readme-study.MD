@@ -1,4 +1,4 @@
-back-end:
+# back-end:
 
 npm init -y 
 
@@ -8,7 +8,9 @@ npm i mongoose
 
 npm i nodemon
 
-front-end:
+npm i cors
+
+# front-end:
 
 npx create-react-app front-end
 
