@@ -1,10 +1,35 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
+import {useNavigate} from 'react-router-dom'
 
 export const Login = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const handleLogin =() => {
-    console.log(email, password);
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    const auth = localStorage.getItem('user')
+    if(auth) {
+      navigate('/')
+    }
+
+  }, [])
+
+  const handleLogin = async () => {
+    let result = await fetch("http://localhost:5500/login", {
+      method: 'post',
+      body: JSON.stringify({ email, password}),
+      headers: {
+        'Content-Type':'application/json'
+      }
+    })
+    result = await result.json()
+    console.log(result);
+    if(result.name) {
+    localStorage.setItem("user", JSON.stringify(result))
+    navigate('/')
+    } else {
+      alert("Please enter correct details")
+    }
   }
   return (
     <div className='login'>
