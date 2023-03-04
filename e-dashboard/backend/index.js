@@ -3,6 +3,8 @@ const cors = require('cors')
 require('./db/config')
 const User = require('./db/User')
 const Product = require('./db/Product')
+const ObjectId = require('mongoose').Types.ObjectId // Solucao - minha, peguei no meu git - getapet - para o id da busca do produto
+
 const app = express()
 
 app.use(express.json())
@@ -48,6 +50,24 @@ app.get("/products", async (req, res) => {
 app.delete("/product/:id", async (req, res) => {
   let result = await Product.deleteOne({_id: req.params.id})
   res.send(result)
+})
+
+app.get("/product/:id", async (req, res) => {
+  // let result = await Product.findOne({_id: req.params.id}) => nao funciona muito bem
+  const id = req.params.id
+  /* O codigo abaixo tirei do meu git hub (getapet) */  
+  // check if id is valid
+  if(!ObjectId.isValid(id)) {
+    res.status(422).json({message: 'ID inválido!'})
+    return
+  }
+  let result = await Product.findById(id)
+  /* O codigo acima tirei do meu github (getapet) */  
+  if(result) {
+    res.send(result)
+  } else {
+    res.send({"result": "product No found"})
+  }
 })
 
 app.listen(5500)
