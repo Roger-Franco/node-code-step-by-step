@@ -1,10 +1,29 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
+import { useParams } from 'react-router-dom';
+
 
 export const UpdateProduct = () => {
   const [name, setName] = useState('')
   const [price, setPrice] = useState('')
   const [category, setCategory] = useState('')
   const [company, setCompany] = useState('')
+  const params = useParams()
+
+  useEffect(() => {
+    getProductDetails()
+  }, [])
+
+  const getProductDetails = async () => {
+    console.log(params, 'params');
+    let result = await fetch(`http://localhost:5500/product/${params.id}`)
+    result = await result.json()
+    console.log(result);
+    setName(result.name)
+    setPrice(result.price)
+    setCategory(result.category)
+    setCompany(result.company)
+  }
+  
 
   const UpdateProduct = async () => {
     console.log(name, price, category, company);
