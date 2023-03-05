@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 
 export const UpdateProduct = () => {
@@ -8,6 +8,8 @@ export const UpdateProduct = () => {
   const [category, setCategory] = useState('')
   const [company, setCompany] = useState('')
   const params = useParams()
+  const navigate = useNavigate()
+  
 
   useEffect(() => {
     getProductDetails()
@@ -17,7 +19,7 @@ export const UpdateProduct = () => {
     console.log(params, 'params');
     let result = await fetch(`http://localhost:5500/product/${params.id}`)
     result = await result.json()
-    console.log(result);
+    // console.log(result);
     setName(result.name)
     setPrice(result.price)
     setCategory(result.category)
@@ -26,7 +28,18 @@ export const UpdateProduct = () => {
   
 
   const UpdateProduct = async () => {
-    console.log(name, price, category, company);
+    let result = await fetch(`http://localhost:5500/product/${params.id}`, {
+      method: 'Put',
+      body: JSON.stringify({name, price, category, company}),
+      headers: {
+        'Content-Type':'application/json'
+      }
+    })
+    result = await result.json()
+    if(result) {
+      navigate('/')
+    }
+    // console.log(result);
   }
 
   return (
@@ -36,7 +49,7 @@ export const UpdateProduct = () => {
       <input className='inputBox'  type="text" placeholder='Enter product price' value={price} onChange={(e)=>setPrice(e.target.value)}/>
       <input className='inputBox'  type="text" placeholder='Enter product category' value={category} onChange={(e)=>setCategory(e.target.value)}/>
       <input className='inputBox'  type="text" placeholder='Enter product company' value={company} onChange={(e)=>setCompany(e.target.value)}/>
-    <button onClick={UpdateProduct} className='appButton'>Add Product</button>
+    <button onClick={UpdateProduct} className='appButton'>Update Product</button>
     </div>
   )
 }
