@@ -9,6 +9,7 @@ export const Nav = () => {
   const logout = () => {
     // localStorage.clear() // => esse remove tudo
     localStorage.removeItem('user')
+    localStorage.removeItem('token')
     navigate('/signup')
   }
 
