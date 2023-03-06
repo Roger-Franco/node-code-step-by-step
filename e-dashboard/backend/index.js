@@ -5,6 +5,9 @@ const User = require('./db/User')
 const Product = require('./db/Product')
 const ObjectId = require('mongoose').Types.ObjectId // Solucao - minha, peguei no meu git - getapet - para o id da busca do produto
 
+const Jwt = require('jsonwebtoken')
+const jwtkey = '-ecomm'
+
 const app = express()
 
 app.use(express.json())
@@ -15,7 +18,13 @@ app.post("/register", async (req, res) => {
   let result = await user.save()
   result = result.toObject()
   delete result.password // essa função serve para retirar o password
-  res.send(result)
+  Jwt.sign({result}, jwtkey, {expiresIn: "2h"}, (err, token) => {
+    if(err) {
+      res.send({"result": "Something went wrong, please try after sometime"})
+    }
+    res.send({ result, auth: token })
+
+  })
 })
 
 app.post("/login", async (req, res) => {
@@ -23,7 +32,13 @@ app.post("/login", async (req, res) => {
   let user = await User.findOne(req.body).select("-password")
   // let result = await user.save()
   if(user) {
-    res.send(user)
+    Jwt.sign({user}, jwtkey, {expiresIn: "2h"}, (err, token) => {
+      if(err) {
+        res.send({"result": "Something went wrong, please try after sometime"})
+      }
+      res.send({ user, auth: token })
+
+    })
   } else {
     res.send({"result": "No user found"})
   }

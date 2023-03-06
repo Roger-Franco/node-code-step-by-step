@@ -10,6 +10,8 @@ npm i nodemon
 
 npm i cors
 
+npm i jsonwebtoken
+
 # front-end:
 
 npx create-react-app front-end
