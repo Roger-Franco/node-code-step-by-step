@@ -47,13 +47,13 @@ app.post("/login", async (req, res) => {
   }
 })
 
-app.post("/add-product", async (req, res) => {
+app.post("/add-product", verifyToken, async (req, res) => {
   let product = new Product(req.body)
   let result = await product.save()
   res.send(result)
 })
 
-app.get("/products", async (req, res) => {
+app.get("/products", verifyToken, async (req, res) => {
   const products = await Product.find()
   if(products.length > 0) {
     res.send(products)
@@ -62,12 +62,12 @@ app.get("/products", async (req, res) => {
   }
 })
 
-app.delete("/product/:id", async (req, res) => {
+app.delete("/product/:id", verifyToken, async (req, res) => {
   let result = await Product.deleteOne({_id: req.params.id})
   res.send(result)
 })
 
-app.get("/product/:id", async (req, res) => {
+app.get("/product/:id", verifyToken, async (req, res) => {
   // let result = await Product.findOne({_id: req.params.id}) => nao funciona muito bem
   const id = req.params.id
   /* O codigo abaixo tirei do meu git hub (getapet) */  
@@ -85,12 +85,12 @@ app.get("/product/:id", async (req, res) => {
   }
 })
 
-app.put("/product/:id", async (req, res) => {
+app.put("/product/:id",verifyToken,  async (req, res) => {
   let result = await Product.updateOne({_id: req.params.id}, {$set:req.body})
   res.send(result)
 })
 
-app.get("/search/:key", async (req, res) => {
+app.get("/search/:key", verifyToken, async (req, res) => {
   let result = await Product.find({
     "$or":[
       {
@@ -106,5 +106,24 @@ app.get("/search/:key", async (req, res) => {
   })
   res.send(result)
 })
+
+function verifyToken(req, res, next) {
+  // console.log(req.headers['authorization']);
+  let token = req.headers['authorization']
+  if (token) {
+    token = token.split(' ')[1]
+    Jwt.verify(token, jwtkey, (err, success) => {
+      if(err) {
+        res.status(401).send({result: 'Please provide a valid token'})
+      } else {
+        next()
+      }
+    })
+
+    console.log(token);
+  } else {
+    res.status(403).send({result: 'Please provide a token'})
+  }
+}
 
 app.listen(5500)
